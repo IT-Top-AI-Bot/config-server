@@ -25,7 +25,6 @@ val opentelemetryVersion by extra("2.21.0-alpha")
 dependencies {
     implementation("de.codecentric:spring-boot-admin-starter-client")
     implementation("org.springframework.cloud:spring-cloud-config-server")
-    implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-discoveryclient")
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
