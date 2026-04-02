@@ -19,11 +19,9 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2025.1.1"
-val springBootAdminVersion by extra("4.0.2")
 val opentelemetryVersion by extra("2.21.0-alpha")
 
 dependencies {
-    implementation("de.codecentric:spring-boot-admin-starter-client")
     implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -36,7 +34,6 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-        mavenBom("de.codecentric:spring-boot-admin-dependencies:$springBootAdminVersion")
     }
 }
 
