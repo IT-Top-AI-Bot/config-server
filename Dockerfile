@@ -13,6 +13,24 @@ RUN java -Djarmode=tools -jar application.jar extract --layers --launcher --dest
 ############################
 # Stage: final runtime image
 ############################
+FROM eclipse-temurin:25-jdk AS optimizer
+WORKDIR /application
+
+COPY --from=extractor /application/extracted/dependencies/ ./
+COPY --from=extractor /application/extracted/spring-boot-loader/ ./
+COPY --from=extractor /application/extracted/snapshot-dependencies/ ./
+COPY --from=extractor /application/extracted/application/ ./
+
+RUN CONFIG_SERVER_USERNAME=dummy \
+    CONFIG_SERVER_PASSWORD=dummy \
+    OTEL_EXPORTER_OTLP_ENDPOINT=http://dummy:4317 \
+    java -Dspring.context.exit=onRefresh \
+    -XX:ArchiveClassesAtExit=application.jsa \
+    org.springframework.boot.loader.launch.JarLauncher
+
+############################
+# Stage: final runtime image
+############################
 FROM eclipse-temurin:25-jre-alpine
 WORKDIR /application
 
@@ -21,6 +39,7 @@ USER spring:spring
 
 VOLUME ["/tmp"]
 
+COPY --from=optimizer /application/application.jsa ./
 COPY --from=extractor /application/extracted/dependencies/ ./
 COPY --from=extractor /application/extracted/spring-boot-loader/ ./
 COPY --from=extractor /application/extracted/snapshot-dependencies/ ./
@@ -28,4 +47,4 @@ COPY --from=extractor /application/extracted/application/ ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "--sun-misc-unsafe-memory-access=allow", "-XX:SharedArchiveFile=application.jsa", "org.springframework.boot.loader.launch.JarLauncher"]
