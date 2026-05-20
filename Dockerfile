@@ -3,7 +3,7 @@
 ############################
 # Stage: extract layers from pre-built JAR
 ############################
-FROM eclipse-temurin:25-jdk AS extractor
+FROM eclipse-temurin:25-jdk-alpine AS extractor
 WORKDIR /application
 
 COPY build/libs/*.jar application.jar
@@ -13,7 +13,7 @@ RUN java -Djarmode=tools -jar application.jar extract --layers --launcher --dest
 ############################
 # Stage: final runtime image
 ############################
-FROM eclipse-temurin:25-jdk AS optimizer
+FROM eclipse-temurin:25-jdk-alpine AS optimizer
 WORKDIR /application
 
 COPY --from=extractor /application/extracted/dependencies/ ./
