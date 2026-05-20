@@ -31,6 +31,8 @@ management:
         include: health,info,refresh,prometheus
   endpoint:
     health:
+      probes:
+        enabled: true
       show-details: when-authorized
   tracing:
     sampling:
